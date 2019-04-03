@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>res/ChatMainWindow.qml</file>
+        <file>res/ConnectToServer.qml</file>
+        <file>res/Disconnected.qml</file>
+        <file>res/Nickname.qml</file>
+        <file>res/PrivateMessage.qml</file>
+        <file>res/ScrollBar.qml</file>
+        <file>res/indicator.png</file>
+    </qresource>
+</RCC>
