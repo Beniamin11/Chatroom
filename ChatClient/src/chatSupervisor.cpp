@@ -306,16 +306,17 @@ void ChatMainWindow::closePrivateW(const QString &text)
 void ChatMainWindow::appendText(const QString &text)
 {
     QString currentTime = m_timestamp.currentTime().toString("hh:mm");
+    QString message = breakText(text);
 
-    if(text.contains('\n'))
+    if(message.contains('\n'))
     {
-        QStringList temp = text.split('\n');
-        m_contentModel->append(temp[0], "[" + currentTime + "]");
+        QStringList temp = message.split('\n');        
 
         while(QRegExp("\\s*").exactMatch(temp.back()))
         {
             temp.pop_back();
         }
+        m_contentModel->append(temp[0], "[" + currentTime + "]");
 
         for(int i = 1; i < temp.length(); i++)
         {
@@ -325,8 +326,39 @@ void ChatMainWindow::appendText(const QString &text)
     }
     else
     {
-        m_contentModel->append(text, "[" + currentTime + "]" );
+        m_contentModel->append(message, "[" + currentTime + "]" );
     }
+}
+
+QString ChatMainWindow::breakText(QString text)
+{
+    QFont myFont("TimesNewRoman", 15);
+    QFontMetrics fm(myFont);
+    int textWidth;
+
+    textWidth = fm.width(text);
+    qDebug() << "(before)  :"<< text;
+    if(textWidth > m_textLength)
+    {
+        QString tempText;
+        for(int j = 0; j < text.length(); j++)
+        {
+            if(text[j] == '\n')
+                tempText = "";
+            else
+            {
+                tempText = tempText + text.at(j);
+                textWidth = fm.width(tempText);
+                if(textWidth > m_textLength)
+                {
+                    text.insert(j, '\n');
+                    tempText = "";
+                }
+            }
+        }
+    }
+    qDebug() << "(after)   :"<< text;
+    return text;
 }
 
 QObject *ChatMainWindow::getModel(const QString &otherUser)
@@ -346,6 +378,12 @@ void ChatMainWindow::setChangingUser(bool state)
 {
     m_userChange = state;
     emit changingUserChanged();
+}
+
+void ChatMainWindow::setTextLength(int len)
+{
+    m_textLength = len;
+    emit textLengthChanged();
 }
 
 void ChatMainWindow::setPopupTitle(const QString &title)
@@ -369,6 +407,8 @@ bool ChatMainWindow::changingUser() { return m_userChange; }
 bool ChatMainWindow::connected() { return m_clientConnected; }
 
 bool ChatMainWindow::pmSelf() { return m_pmSelf; }
+
+int ChatMainWindow::textLength() { return m_textLength; }
 
 QObject *ChatMainWindow::content() { return m_contentModel; }
 
