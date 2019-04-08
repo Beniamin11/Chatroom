@@ -54,6 +54,7 @@ Item
             clip: true
             flickableDirection: Flickable.VerticalFlick
             boundsBehavior: Flickable.StopAtBounds
+            onWidthChanged: cmw.textLength = width - 70
             delegate: TextEdit{
                     x: time.width
                     id: chatText                    
@@ -68,7 +69,7 @@ Item
                     selectByMouse: true
                     mouseSelectionMode: TextInput.SelectCharacters
                     textFormat: Text.PlainText
-                    width: chatContent.width - 85
+                    width: chatContent.width - 75
                     wrapMode: Text.Wrap
 
                     TextEdit {
@@ -81,7 +82,6 @@ Item
                         selectByMouse: true
                         textFormat: Text.PlainText
                         width: 60
-                        wrapMode: Text.Wrap
                     }
                 }
             ScrollBar {}
@@ -91,10 +91,14 @@ Item
     TextArea
     {
         function send() { sendButtonPressed(); text = ""; }
+        function newLine() {
+            var temp = cursorPosition;
+            text = text.slice(0,temp) + '\n' + text.slice(temp, text.length);
+            cursorPosition = temp +1
+        }
 
         id: messageLineEdit
         clip: true
-        wrapMode: Text.Wrap        
         height: 65
         anchors {
             bottom: chatWindow.bottom
@@ -103,6 +107,7 @@ Item
             bottomMargin: 30
             leftMargin: 10
         }
+        wrapMode: Text.Wrap
         font { pixelSize: 16; family: "TimesNewRoman"; }
         selectByMouse: true
         onTextChanged: if(length > 2001)   text = text.slice(0,2000)
@@ -110,10 +115,8 @@ Item
         Keys.onTabPressed: if(sendButton.enabled)   sendButton.forceActiveFocus()
         Keys.onEnterPressed: if( sendButton.enabled )  send()
         Keys.onReturnPressed: if(  sendButton.enabled  && !(event.modifiers & Qt.ShiftModifier)) send()
-                              else if( sendButton.enabled )
-                                  { var temp = cursorPosition;
-                                    text = text.slice(0,temp) + '\n' + text.slice(temp, text.length);
-                                    cursorPosition = temp +1 }
+                              else if( sendButton.enabled ) newLine()
+
     }
 
     Rectangle{

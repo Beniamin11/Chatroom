@@ -8,6 +8,7 @@
 #include <QMap>
 #include <QVector>
 #include <QDateTime>
+#include <QFontMetrics>
 
 #include "pmmodel.h"
 #include "ContentModel.h"
@@ -25,6 +26,7 @@ class ChatMainWindow : public QObject
     Q_PROPERTY(bool connected READ connected NOTIFY connectedChanged)
     Q_PROPERTY(bool changingUser READ changingUser WRITE setChangingUser NOTIFY changingUserChanged)
     Q_PROPERTY(bool pmSelf  READ pmSelf  NOTIFY pmSelfChanged)
+    Q_PROPERTY(int textLength READ textLength WRITE setTextLength NOTIFY textLengthChanged)
 
     Q_PROPERTY(QObject* content READ content NOTIFY contentChanged)
     Q_PROPERTY(QObject* users READ users NOTIFY usersChanged)
@@ -50,6 +52,7 @@ public:
     bool changingUser();
     bool connected();
     bool pmSelf();
+    int textLength();
 
     void doCommand(const QString& text);
     void mainMessage(const QString &text);
@@ -61,13 +64,16 @@ public:
     void sendPM(const QString& text);
     void privateWindow(const QString &text);
     void closePrivateW(const QString &text);
-    void appendText(const QString &text);
+    void appendText(const QString &text);    
 
     void connectToServer();
+
+    QString breakText(QString text);
 
 public slots:
     void setNickname(const QString &nickname);
     void setChangingUser(bool state);
+    void setTextLength(int len);
     void setPopupTitle(const QString &title);
     void setOtherUser(const QString &user);
 
@@ -91,6 +97,7 @@ signals:
     void contentChanged();
     void usersChanged();
     void connectedChanged();
+    void textLengthChanged();
 
 private:
     QTcpSocket *socket;
@@ -108,6 +115,7 @@ private:
     usersModel *m_usersModel;
     contentModel *m_contentModel;
 
+    int m_textLength;
     int m_port;
     int m_descriptor;
 

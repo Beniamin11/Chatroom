@@ -332,7 +332,7 @@ void ChatMainWindow::appendText(const QString &text)
 
 QString ChatMainWindow::breakText(QString text)
 {
-    QFont myFont("TimesNewRoman", 15);
+    QFont myFont("TimesNewRoman", 13);
     QFontMetrics fm(myFont);
     int textWidth;
 

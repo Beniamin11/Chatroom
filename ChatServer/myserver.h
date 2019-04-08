@@ -19,7 +19,7 @@ class MyServer : public QObject
 public:
     explicit MyServer(QObject *parent = 0);
 
-    enum CommandType {Set, Change, CloseMain, Validate, Request,Message, OpenPmWindow, PM, ClosePmWindow};
+    enum CommandType {Set, Change, CloseMain, Validate, Request, Message, OpenPmWindow, PM, ClosePmWindow};
 
     void doCommand(const QString &message);
     void mainMessage(const QString &message);
@@ -41,9 +41,6 @@ public slots:
     void newConnection();    
     void read();
     void remove();
-
-signals:
-    void messageChanged();
 
 private:
     QTcpServer *server;    
