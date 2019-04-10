@@ -91,6 +91,8 @@ void MyServer::doCommand(const QString &message)
         case CommandType::PM: sendPM(message); break;
 
         case CommandType::ClosePmWindow: closePrivateWindow(message); break;
+
+        default: { m_message = ""; broadcast = false; break; }
     }
 }
 
@@ -215,6 +217,8 @@ bool MyServer::checkValidUser()
 
 void MyServer::prepareToWrite()
 {
+    if(m_message.isEmpty())
+        return;
     if(!broadcast)
     {
         for(QTcpSocket* instance : clientList)

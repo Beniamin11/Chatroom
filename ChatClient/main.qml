@@ -80,8 +80,9 @@ ApplicationWindow {
     {
         id: chatWindow
         visible: showWindow === 2 ? true : false
-        onSendButtonPressed: cmw.sendCommand(ChatWindow.Message, cmw.nickname + '\n' + lineMessages) // cmw.sendMessage(cmw.nickname, lineMessages)
+        onSendButtonPressed: cmw.sendCommand(ChatWindow.Message, cmw.nickname + '\n' + lineMessages)
         onOpenPM: cmw.sendCommand(ChatWindow.OpenPmWindow, nickname2)
+        onAlertWindow: root.alert(0)
     }
 
     Disconnected

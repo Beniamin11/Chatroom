@@ -8,5 +8,6 @@
         <file>res/PrivateMessage.qml</file>
         <file>res/ScrollBar.qml</file>
         <file>res/indicator.png</file>
+        <file>res/icon.png</file>
     </qresource>
 </RCC>

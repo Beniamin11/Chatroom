@@ -64,7 +64,8 @@ public:
     void sendPM(const QString& text);
     void privateWindow(const QString &text);
     void closePrivateW(const QString &text);
-    void appendText(const QString &text);    
+    void appendText(const QString &text);
+    bool openPmWindow(const QString &key);
 
     void connectToServer();
 
@@ -110,7 +111,8 @@ private:
     QTime m_timestamp;
 
     QMap<int, QString> m_commandsMap;
-    QMap<QString, pmModel*> m_pmList;
+    QMap<QString, pmModel*> m_currentPmList;
+    QMap<QString, pmModel*> m_closedPmList;
 
     usersModel *m_usersModel;
     contentModel *m_contentModel;

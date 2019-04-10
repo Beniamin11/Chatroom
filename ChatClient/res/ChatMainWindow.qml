@@ -9,6 +9,7 @@ Item
     anchors.fill: parent
 
     signal sendButtonPressed
+    signal alertWindow
     signal openPM(string nickname2)
 
     property string lineMessages: messageLineEdit.text    
@@ -28,7 +29,10 @@ Item
 
     Connections {
         target: cmw.content
-        onRowAdd: chatContent.positionViewAtEnd()
+        onRowAdd:{
+            chatContent.positionViewAtEnd()
+            alertWindow()
+        }
     }
 
     Rectangle

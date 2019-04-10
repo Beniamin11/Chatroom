@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QIcon>
 #include <qqml.h>
 #include <memory>
 
@@ -17,6 +18,8 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty("cmw", &chat);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+
+    app.setWindowIcon(QIcon(":/res/icon.png"));
 
     return app.exec();
 }

@@ -19,7 +19,7 @@ class MyServer : public QObject
 public:
     explicit MyServer(QObject *parent = 0);
 
-    enum CommandType {Set, Change, CloseMain, Validate, Request, Message, OpenPmWindow, PM, ClosePmWindow};
+    enum CommandType {Set = 1, Change, CloseMain, Validate, Request, Message, OpenPmWindow, PM, ClosePmWindow};
 
     void doCommand(const QString &message);
     void mainMessage(const QString &message);

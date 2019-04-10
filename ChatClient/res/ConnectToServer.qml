@@ -68,7 +68,6 @@ Item
         }
     }
 
-
     Text{
         id: portText
         anchors { right: parent.right; left: parent.horizontalCenter; top:textConnect.bottom

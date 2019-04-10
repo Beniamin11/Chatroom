@@ -20,7 +20,6 @@ ApplicationWindow {
     onClosing:
     {
         cmw.sendCommand(ChatWindow.ClosePmWindow, otherUser)
-        destroy()
     }
 
     function sendMessage(message)
@@ -30,7 +29,6 @@ ApplicationWindow {
 
     Connections {
         target: cmw
-        onFocusPmWindow: if(otherUser == other)    privateWindow.requestActivate();
         onOtherUserChanged: if(otherUser == other) otherUser = cmw.otherUser
     }
 
@@ -74,7 +72,6 @@ ApplicationWindow {
                 color: "black"                
                 onContentWidthChanged: if(contentWidth > parent.width - pmContent.pmMargin) width = parent.width - pmContent.pmMargin                
                 onLinkActivated: Qt.openUrlExternally(link)
-                onLinkHovered: MouseArea.cursorShape = Qt.OpenHandCursor
 
                 Rectangle {
                     anchors {
@@ -137,6 +134,8 @@ ApplicationWindow {
         pmModel = cmw.getModel(otherUser)        
         messageLineEdit.forceActiveFocus()
         show();
+        for(var i = 0; i < pmContent.count; i++)
+             pmContent.incrementCurrentIndex();
     }
 }
 

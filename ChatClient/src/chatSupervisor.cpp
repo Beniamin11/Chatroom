@@ -211,12 +211,12 @@ void ChatMainWindow::nChange(const QString &text)
     m_contentModel->addProperties(false, true);
     appendText("*" + oldNickname + " is now " + nickname);
 
-    auto pos = m_pmList.find(oldNickname);
-    if(pos != m_pmList.end())
+    auto pos = m_currentPmList.find(oldNickname);
+    if(pos != m_currentPmList.end())
     {
-        pmModel* temp = m_pmList[oldNickname];
-        m_pmList.erase(pos);
-        m_pmList.insert(nickname, temp);
+        pmModel* temp = m_currentPmList[oldNickname];
+        m_currentPmList.erase(pos);
+        m_currentPmList.insert(nickname, temp);
         m_otherUser = nickname;
         emit otherUserChanged(oldNickname);
     }
@@ -250,14 +250,7 @@ void ChatMainWindow::sendPM(const QString &text)
     QString sender = tempMessage[1];
     QString receiver = tempMessage[2];
 
-    auto pos = m_pmList.find(receiver);
-    if(pos == m_pmList.end())
-    {
-        pmModel* tempPM = new pmModel(this);
-        m_pmList.insert(receiver, tempPM);
-        emit openPrivateWindow(receiver);
-    }
-    else
+    if( !openPmWindow(receiver) )
         m_pmSelf = (sender.compare(receiver) != 0);
 
     while(QRegExp("\\s*").exactMatch(tempMessage.back()))
@@ -269,26 +262,17 @@ void ChatMainWindow::sendPM(const QString &text)
         message = message + '\n' + tempMessage[i];
     }
 
-    pmModel* temp = m_pmList[receiver];
+    pmModel* temp = m_currentPmList[receiver];
     temp->addProperties(m_pmSelf);
-    temp->append(message);
+    temp->append(message);    
 }
 
 void ChatMainWindow::privateWindow(const QString &text)
 {
     QStringList temp = text.split('\n');
     QString key = temp[1];
-    auto pos = m_pmList.find(key);
-    if(pos == m_pmList.end())
-    {
-        pmModel* tempPM = new pmModel(this);
-        m_pmList.insert(key, tempPM);
-        emit openPrivateWindow(key);
-    }
-    else
-    {
+    if( !openPmWindow(key) )
         emit focusPmWindow(key);
-    }
 }
 
 void ChatMainWindow::closePrivateW(const QString &text)
@@ -296,10 +280,37 @@ void ChatMainWindow::closePrivateW(const QString &text)
     QStringList temp = text.split('\n');
     QString otherUser = temp[1];
 
-    auto pos = m_pmList.find(otherUser);
-    if(pos != m_pmList.end())
+    auto pos = m_currentPmList.find(otherUser);
+    if(pos != m_currentPmList.end())
     {
-        m_pmList.erase(pos);
+        m_closedPmList.insert(otherUser, m_currentPmList[otherUser]);
+        m_currentPmList.erase(pos);
+    }
+}
+
+bool ChatMainWindow::openPmWindow(const QString &key)
+{
+    auto pos = m_currentPmList.find(key);
+    if(pos == m_currentPmList.end())
+    {
+        auto c_pos = m_closedPmList.find(key);
+        if(c_pos == m_closedPmList.end())
+        {
+            pmModel* tempPM = new pmModel(this);
+            m_currentPmList.insert(key, tempPM);
+            emit openPrivateWindow(key);
+        }
+        else
+        {
+            m_currentPmList.insert(key, m_closedPmList[key]);
+            m_closedPmList.erase(c_pos);
+            emit openPrivateWindow(key);
+        }
+        return true;
+    }
+    else
+    {
+        return false;
     }
 }
 
@@ -362,9 +373,8 @@ QString ChatMainWindow::breakText(QString text)
 }
 
 QObject *ChatMainWindow::getModel(const QString &otherUser)
-{
-    qDebug() << "getModel("<<otherUser<<")"<< m_pmList[otherUser];
-    return m_pmList[otherUser];
+{    
+    return m_currentPmList[otherUser];
 }
 
 void ChatMainWindow::setNickname(const QString &nickname)
