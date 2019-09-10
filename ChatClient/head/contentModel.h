@@ -28,7 +28,8 @@ public:
     void append(const QString &message, const QString timeStamp);
     void clear();
     void addProperties(bool self, bool action);
-
+ 
+ 
 signals:
     void rowAdd();
 
@@ -38,7 +39,6 @@ private:
 
     QVector<QString> m_colors;
     QVector<bool> m_action;
-
 };
 
 #endif // CONTENTMODEL_H
