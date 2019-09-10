@@ -1,0 +1,12 @@
+release/pmModel.o
+release/main.o
+release/encrypt.o
+release/chatSupervisor.o
+release/usersModel.o
+release/contentModel.o
+release/lzw.o
+release/qrc_qml.o
+release/moc_pmModel.o
+release/moc_chatSupervisor.o
+release/moc_contentModel.o
+release/moc_usersModel.o

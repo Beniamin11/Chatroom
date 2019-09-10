@@ -8,14 +8,16 @@ SOURCES += \
     src/encrypt.cpp \
     src/chatSupervisor.cpp \
     src/usersModel.cpp \
-    src/contentModel.cpp
+    src/contentModel.cpp \
+    src/lzw.cpp
 
 HEADERS += \
     head/pmModel.h \
     head/encrypt.h \
     head/chatSupervisor.h \
     head/contentModel.h \
-    head/usersModel.h
+    head/usersModel.h \
+    head/lzw.h
 
 RESOURCES += qml.qrc \
 

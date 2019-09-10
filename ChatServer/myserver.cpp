@@ -1,7 +1,7 @@
-#include "myserver.h"
+#include "myServer.h"
 #include "encrypt.h"
 
-MyServer::MyServer(QObject *parent)
+ChatServer::ChatServer(QObject *parent)
     :QObject(parent)    
     ,m_message("")
     ,m_descriptor(0)      
@@ -11,17 +11,9 @@ MyServer::MyServer(QObject *parent)
 
     connect(server, SIGNAL(newConnection()), this, SLOT(newConnection()) );
 
-    commandsMap.insert(CommandType::Set, "$?s&*!");
-    commandsMap.insert(CommandType::Change, "$%ch*#");
-    commandsMap.insert(CommandType::Message, "$*me%#");
-    commandsMap.insert(CommandType::CloseMain, "$^cl#*");    
-    commandsMap.insert(CommandType::ClosePmWindow, "$&cw)!");    
-    commandsMap.insert(CommandType::OpenPmWindow, "$%op!^");
-    commandsMap.insert(CommandType::Validate, "$#va(*");
-    commandsMap.insert(CommandType::Request, "$^re@&");
-    commandsMap.insert(CommandType::PM, "$#pm%*");
+    initCommands();
 
-    if(!server->listen(QHostAddress("10.67.132.168"), 1234))
+    if(!server->listen(QHostAddress(QHostAddress::LocalHost), 1234))
     {
         qDebug() << "Server could not start! ";
     }
@@ -31,7 +23,7 @@ MyServer::MyServer(QObject *parent)
     }
 }
 
-void MyServer::newConnection()
+void ChatServer::newConnection()
 {
     QTcpSocket *socket = server->nextPendingConnection();
 
@@ -44,7 +36,7 @@ void MyServer::newConnection()
     qDebug() << "User connected: " << socket->socketDescriptor();
 }
 
-void MyServer::read()
+void ChatServer::read()
 {
     QString incMessage;
 
@@ -66,7 +58,7 @@ void MyServer::read()
     prepareToWrite();
 }
 
-void MyServer::doCommand(const QString &message)
+void ChatServer::doCommand(const QString &message)
 {
     QStringList temp = message.split('\n');
     QString commandCode = temp[0];
@@ -96,13 +88,13 @@ void MyServer::doCommand(const QString &message)
     }
 }
 
-void MyServer::mainMessage(const QString &message)
+void ChatServer::mainMessage(const QString &message)
 {
     broadcast = true;
     m_message = message;
 }
 
-void MyServer::validateNickname(const QString &message)
+void ChatServer::validateNickname(const QString &message)
 {
      QStringList temp = message.split('\n');
      QString nickname = temp[1].simplified();
@@ -115,7 +107,7 @@ void MyServer::validateNickname(const QString &message)
      broadcast = false;
 }
 
-void MyServer::nicknameSet(const QString &message)
+void ChatServer::nicknameSet(const QString &message)
 {
     QStringList temp = message.split('\n');
     QString nickname = temp[1].simplified();
@@ -124,7 +116,7 @@ void MyServer::nicknameSet(const QString &message)
     nicknameMap.insert(m_descriptor, nickname);
 }
 
-void MyServer::nicknameChanged(const QString &message)
+void ChatServer::nicknameChanged(const QString &message)
 {
     QStringList temp = message.split('\n');
     QString nickname = temp[1];
@@ -138,7 +130,7 @@ void MyServer::nicknameChanged(const QString &message)
     nicknameMap.insert(m_descriptor, nickname);
 }
 
-bool MyServer::checkForExisting(const QString &nickname)
+bool ChatServer::checkForExisting(const QString &nickname)
 {
     for(auto existingN : nicknameMap)
     {
@@ -150,13 +142,13 @@ bool MyServer::checkForExisting(const QString &nickname)
     return false;
 }
 
-void MyServer::closeWindow()
+void ChatServer::closeWindow()
 {
     m_message = "";
     broadcast = false;
 }
 
-void MyServer::requestList(const QString &message)
+void ChatServer::requestList(const QString &message)
 {
     QStringList temp = message.split('\n');
     QString nickName = temp[1];
@@ -167,7 +159,7 @@ void MyServer::requestList(const QString &message)
     broadcast = false;
 }
 
-void MyServer::privateWindow(const QString &text)
+void ChatServer::privateWindow(const QString &text)
 {
     QStringList tempM = text.split('\n');
     QString otherUser = tempM[1];
@@ -175,7 +167,7 @@ void MyServer::privateWindow(const QString &text)
     m_message = commandsMap[CommandType::OpenPmWindow] + '\n' + otherUser;
 }
 
-void MyServer::sendPM(const QString &text)
+void ChatServer::sendPM(const QString &text)
 {
     QStringList tempM = text.split('\n');
     QString otherUser = tempM[1];
@@ -196,7 +188,7 @@ void MyServer::sendPM(const QString &text)
     broadcast = false;
 }
 
-void MyServer::closePrivateWindow(const QString &text)
+void ChatServer::closePrivateWindow(const QString &text)
 {
     QStringList tempM = text.split('\n');
     QString otherUser = tempM[1];
@@ -205,7 +197,7 @@ void MyServer::closePrivateWindow(const QString &text)
     broadcast = false;
 }
 
-bool MyServer::checkValidUser()
+bool ChatServer::checkValidUser()
 {
     for(auto user : nicknameMap)
     {
@@ -215,7 +207,7 @@ bool MyServer::checkValidUser()
     return false;
 }
 
-void MyServer::prepareToWrite()
+void ChatServer::prepareToWrite()
 {
     if(m_message.isEmpty())
         return;
@@ -238,13 +230,13 @@ void MyServer::prepareToWrite()
     }
 }
 
-void MyServer::write(QTcpSocket* socket, const QString &text)
+void ChatServer::write(QTcpSocket* socket, const QString &text)
 {    
     QString toSend = encryptMessage(text);
     socket->write(toSend.toStdString().c_str());
 }
 
-void MyServer::remove()
+void ChatServer::remove()
 {
     auto it = clientList.begin();
     for(QTcpSocket* instance : clientList)
@@ -280,4 +272,17 @@ void MyServer::remove()
         prepareToWrite();
     }
 
+}
+
+void ChatServer::initCommands()
+{
+    commandsMap.insert(CommandType::Set, "$?s&*!");
+    commandsMap.insert(CommandType::Change, "$%ch*#");
+    commandsMap.insert(CommandType::Message, "$*me%#");
+    commandsMap.insert(CommandType::CloseMain, "$^cl#*");
+    commandsMap.insert(CommandType::ClosePmWindow, "$&cw)!");
+    commandsMap.insert(CommandType::OpenPmWindow, "$%op!^");
+    commandsMap.insert(CommandType::Validate, "$#va(*");
+    commandsMap.insert(CommandType::Request, "$^re@&");
+    commandsMap.insert(CommandType::PM, "$#pm%*");
 }

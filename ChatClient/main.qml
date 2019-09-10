@@ -18,6 +18,7 @@ ApplicationWindow {
 
     property int showWindow: 0
     signal sendButtonClicked
+    onClosing: cmw.saveDataOnClosing()
 
     menuBar: MenuBar{
         Menu{
@@ -64,6 +65,7 @@ ApplicationWindow {
         visible: showWindow == 0 ? true : false
         onCancelPressed: root.close()
         onTryConnectPressed: cmw.clientConnect(ipAddress, m_port)
+        onShowHistoryPressed: { cmw.readSavedData(); showWindow = 4; }
     }
 
     Nickname
@@ -91,5 +93,12 @@ ApplicationWindow {
         visible: showWindow == 3 ? true : false
         onCancelReconnectPressed: root.close()
         onTryReconnectPressed: cmw.reconnect()
+    }
+
+    History
+    {
+        id: chatHistory
+        visible: showWindow == 4 ? true : false
+        onBackPressed: showWindow = 0
     }
 }

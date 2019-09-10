@@ -9,5 +9,6 @@
         <file>res/ScrollBar.qml</file>
         <file>res/indicator.png</file>
         <file>res/icon.png</file>
+        <file>res/History.qml</file>
     </qresource>
 </RCC>

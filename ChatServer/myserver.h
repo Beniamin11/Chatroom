@@ -1,5 +1,5 @@
-#ifndef MYSERVER_H
-#define MYSERVER_H
+#ifndef ChatServer_H
+#define ChatServer_H
 
 #include <QObject>
 #include <QDebug>
@@ -12,14 +12,15 @@
 
 using std::string;
 
-class MyServer : public QObject
+class ChatServer : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit MyServer(QObject *parent = 0);
+    explicit ChatServer(QObject *parent = nullptr);
 
-    enum CommandType {Set = 1, Change, CloseMain, Validate, Request, Message, OpenPmWindow, PM, ClosePmWindow};
+    enum CommandType {Set = 1, Change, CloseMain, Validate,
+                      Request, Message, OpenPmWindow, PM, ClosePmWindow};
 
     void doCommand(const QString &message);
     void mainMessage(const QString &message);
@@ -37,6 +38,8 @@ public:
     bool checkValidUser();
     bool checkUserToRemove();
     bool checkForExisting(const QString &text);   
+
+    void initCommands();
 public slots:
     void newConnection();    
     void read();
@@ -55,4 +58,4 @@ private:
     bool broadcast;
 };
 
-#endif // MYSERVER_H
+#endif // ChatServer_H

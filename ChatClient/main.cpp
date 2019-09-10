@@ -11,12 +11,13 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    ChatMainWindow chat;
+    ChatSupervisor chat;
     QQmlApplicationEngine engine;
 
-    qmlRegisterType<ChatMainWindow>("ChatWindow", 1, 0, "ChatWindow");
-
+    qmlRegisterType<ChatSupervisor>("ChatWindow", 1, 0, "ChatWindow");
     engine.rootContext()->setContextProperty("cmw", &chat);
+
+
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     app.setWindowIcon(QIcon(":/res/icon.png"));

@@ -1,5 +1,5 @@
-#ifndef CHATMAINWINDOW_H
-#define CHATMAINWINDOW_H
+#ifndef ChatSupervisor_H
+#define ChatSupervisor_H
 
 #include <QObject>
 #include <QTcpSocket>
@@ -9,19 +9,22 @@
 #include <QVector>
 #include <QDateTime>
 #include <QFontMetrics>
+#include <memory>
 
-#include "pmmodel.h"
-#include "ContentModel.h"
-#include "UsersModel.h"
+#include "pmModel.h"
+#include "contentModel.h"
+#include "usersModel.h"
 #include "encrypt.h"
+#include "lzw.h"
 
-class ChatMainWindow : public QObject
+class ChatSupervisor : public QObject
 {
     Q_OBJECT
 
     Q_PROPERTY(QString nickname READ nickname WRITE setNickname NOTIFY nicknameChanged)
     Q_PROPERTY(QString popupTitle READ popupTitle WRITE setPopupTitle NOTIFY popupTitleChanged)
     Q_PROPERTY(QString otherUser READ otherUser WRITE setOtherUser NOTIFY otherUserChanged)
+    Q_PROPERTY(QString convHistory READ convHistory NOTIFY convHistoryChanged)
 
     Q_PROPERTY(bool connected READ connected NOTIFY connectedChanged)
     Q_PROPERTY(bool changingUser READ changingUser WRITE setChangingUser NOTIFY changingUserChanged)
@@ -32,7 +35,7 @@ class ChatMainWindow : public QObject
     Q_PROPERTY(QObject* users READ users NOTIFY usersChanged)
 
 public:
-    explicit ChatMainWindow(QObject* parent = 0);
+    explicit ChatSupervisor(QObject* parent = nullptr);
 
     enum CommandType {Set, Change, CloseMain, Validate, Request, OpenPmWindow, PM, ClosePmWindow, Message};
     Q_ENUMS(CommandType)
@@ -40,6 +43,8 @@ public:
     Q_INVOKABLE void clientConnect(const QString &IP_address, const QString &port);
     Q_INVOKABLE void reconnect();
     Q_INVOKABLE QObject* getModel(const QString &otherUser);
+    Q_INVOKABLE void saveDataOnClosing();
+    Q_INVOKABLE void readSavedData();
 
     //get
     QObject* content();
@@ -48,6 +53,7 @@ public:
     QString popupTitle();
     QString nickname();
     QString otherUser();
+    QString convHistory();
 
     bool changingUser();
     bool connected();
@@ -68,6 +74,7 @@ public:
     bool openPmWindow(const QString &key);
 
     void connectToServer();
+    void initCommands();
 
     QString breakText(QString text);
 
@@ -88,6 +95,7 @@ signals:
     void nicknameChanged();
     void changingUserChanged();
     void popupTitleChanged();
+    void convHistoryChanged();
     void otherUserChanged(QString other);
 
     void openPrivateWindow(QString other);
@@ -103,6 +111,8 @@ signals:
 private:
     QTcpSocket *socket;
 
+    QString m_conversation;
+    QString m_historyConv;
     QString m_nickname;
     QString m_popupTitle;
     QString m_otherUser;
@@ -117,9 +127,8 @@ private:
     usersModel *m_usersModel;
     contentModel *m_contentModel;
 
-    int m_textLength;
     int m_port;
-    int m_descriptor;
+    int m_textLength;    
 
     bool m_self;
     bool m_pmSelf;
@@ -129,4 +138,4 @@ private:
 };
 
 
-#endif // CHATMAINWINDOW_H
+#endif // ChatSupervisor_H

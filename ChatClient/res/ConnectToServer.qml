@@ -6,10 +6,11 @@ Item
     id: connect
     anchors.centerIn: parent
     width: 450
-    height: 200
+    height: 300
 
     signal tryConnectPressed
     signal cancelPressed
+    signal showHistoryPressed
 
     property string ipAddress
     property string m_port
@@ -60,7 +61,7 @@ Item
             id: inputIP
             clip: true
             anchors { fill: parent; rightMargin: 5; leftMargin: 5 }
-            text: "10.67.132.168"
+            text: "127.0.0.1"
             maximumLength: 16
             font { pixelSize: 16; family: "TimesNewRoman"; }
             Keys.onTabPressed: inputPort.forceActiveFocus()
@@ -100,7 +101,7 @@ Item
     Button
     {
         id: tryConnect
-        anchors { left: parent.left; right: parent.horizontalCenter; bottom: connect.bottom; margins: 20 }
+        anchors { left: parent.left; right: parent.horizontalCenter; top: ip.bottom; margins: 20 }
         height: 30
         text: "Connect"
         isDefault: true
@@ -111,11 +112,21 @@ Item
     Button
     {
         id: cancel
-        anchors { left: parent.horizontalCenter; right: parent.right; bottom: connect.bottom; margins: 20 }
+        anchors { left: parent.horizontalCenter; right: parent.right; top: port.bottom; margins: 20 }
         height: 30
         text: "Cancel"
         onClicked: cancelPressed()
     }
+
+    Button
+    {
+        id: history
+        anchors { left: tryConnect.horizontalCenter; right: cancel.horizontalCenter; top: cancel.bottom; topMargin: 40 }
+        height: 30
+        text: "Show History"
+        onClicked: showHistoryPressed()
+    }
+
 
     Component.onCompleted: inputIP.forceActiveFocus();
 }

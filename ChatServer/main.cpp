@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    MyServer mServer;
+    ChatServer mServer;
 
     return a.exec();
 }

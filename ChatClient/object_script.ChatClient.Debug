@@ -1,0 +1,12 @@
+debug/pmModel.o
+debug/main.o
+debug/encrypt.o
+debug/chatSupervisor.o
+debug/usersModel.o
+debug/contentModel.o
+debug/lzw.o
+debug/qrc_qml.o
+debug/moc_pmModel.o
+debug/moc_chatSupervisor.o
+debug/moc_contentModel.o
+debug/moc_usersModel.o
